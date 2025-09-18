@@ -78,9 +78,9 @@ This multiplicative process means wealth compounds over time, making each coin f
 ### Questions to Answer for 75% Grade on Challenge
 
 1. **Expected Value Analysis:** What is the "expected value" of your account balance after 1 coin flip for the original game?
-
+##$1.050
 2. **Expectation vs. Reality:** Is the expected value positive or negative? Do you expect your account to be worth more or less than $1,000 based on this result?
-
+##Positive; we gained $50
 3. **Single Simulation:** Run one simulation showing the dynamics of your account balance over time. Make an object-oriented matplotlib OR ggplot2 plot showing your simulated account balance over time (i.e. as you age). Comment on the results, are you happy?
 
 ### Questions to Answer for 85% Grade on Challenge
