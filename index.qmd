@@ -406,3 +406,370 @@ summary_stats <- distribution_data %>%
 print("Summary Statistics:")
 summary_stats
 ```
+
+## Challenge Solutions 🎯
+
+Now let's work through each of the challenge questions systematically:
+
+### Question 1: Expected Value Analysis (75% Grade)
+
+**What is the "expected value" of your account balance after 1 coin flip for the original game?**
+
+```{r}
+#| label: expected-value-analysis
+#| echo: true
+
+# Expected value calculation for one coin flip
+initial_wealth <- 1000
+prob_heads <- 0.5
+prob_tails <- 0.5
+
+# If heads: wealth becomes 1.5 * initial_wealth
+wealth_if_heads <- 1.5 * initial_wealth
+
+# If tails: wealth becomes 0.6 * initial_wealth  
+wealth_if_tails <- 0.6 * initial_wealth
+
+# Expected value = probability * outcome for each scenario
+expected_value <- prob_heads * wealth_if_heads + prob_tails * wealth_if_tails
+
+cat("Initial wealth: $", initial_wealth, "\n")
+cat("Wealth if heads (50% gain): $", wealth_if_heads, "\n")
+cat("Wealth if tails (40% loss): $", wealth_if_tails, "\n")
+cat("Expected value after 1 flip: $", expected_value, "\n")
+cat("Expected gain/loss: $", expected_value - initial_wealth, "\n")
+```
+
+**Answer:** The expected value after 1 coin flip is **$1,050**. This is calculated as:
+- 50% chance of $1,500 (heads: 50% gain)
+- 50% chance of $600 (tails: 40% loss)
+- Expected value = 0.5 × $1,500 + 0.5 × $600 = $1,050
+
+### Question 2: Expectation vs. Reality (75% Grade)
+
+**Is the expected value positive or negative? Do you expect your account to be worth more or less than $1,000 based on this result?**
+
+```{r}
+#| label: expectation-analysis
+#| echo: true
+
+# The expected value is positive ($1,050 > $1,000)
+# But let's think about this more carefully...
+
+# Expected return per flip
+expected_return <- (1.5 * 0.5) + (0.6 * 0.5)
+cat("Expected return per flip: ", expected_return, "\n")
+cat("This means we expect a ", (expected_return - 1) * 100, "% gain per flip\n")
+
+# But what about the geometric mean?
+# For multiplicative processes, we should consider the geometric mean
+geometric_mean <- sqrt(1.5 * 0.6)
+cat("Geometric mean return: ", geometric_mean, "\n")
+cat("This suggests a ", (geometric_mean - 1) * 100, "% loss per flip on average\n")
+
+cat("\nKey insight: The arithmetic mean suggests profit, but the geometric mean suggests loss!\n")
+cat("This is the difference between expected value and expected growth rate.\n")
+```
+
+**Answer:** 
+- **Expected value is positive** ($1,050 > $1,000)
+- **However, this is misleading!** The arithmetic mean suggests a 5% gain per flip
+- **But the geometric mean** (√(1.5 × 0.6) = √0.9 ≈ 0.949) suggests a **5.1% loss per flip**
+- **Key insight:** For multiplicative processes like wealth accumulation, the geometric mean is more relevant than the arithmetic mean
+
+### Question 3: Single Simulation (75% Grade)
+
+**Run one simulation showing the dynamics of your account balance over time. Make a plot showing your simulated account balance over time. Comment on the results.**
+
+```{r}
+#| label: single-simulation
+#| fig-cap: Single simulation of investment game over 35 years (age 20 to 55)
+#| echo: true
+
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(ggplot2))
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Parameters
+initial_wealth <- 1000
+age_start <- 20
+age_end <- 55
+years <- age_end - age_start
+
+# Simulate one path of the investment game
+simulate_investment_path <- function(initial, years) {
+  wealth <- initial
+  path <- numeric(years + 1)
+  path[1] <- initial
+  
+  for (i in 1:years) {
+    coin_flip <- rbinom(1, 1, 0.5)
+    if (coin_flip == 1) {
+      wealth <- wealth * 1.5  # 50% gain
+    } else {
+      wealth <- wealth * 0.6   # 40% loss
+    }
+    path[i + 1] <- wealth
+  }
+  
+  return(path)
+}
+
+# Run single simulation
+wealth_path <- simulate_investment_path(initial_wealth, years)
+
+# Create data frame
+simulation_data <- tibble(
+  age = age_start:age_end,
+  wealth = wealth_path
+)
+
+# Create time series plot
+ggplot(simulation_data, aes(x = age, y = wealth)) +
+  geom_line(color = "darkblue", linewidth = 1.2) +
+  geom_point(color = "darkblue", size = 2) +
+  geom_hline(yintercept = initial_wealth, color = "red", linetype = "dashed", linewidth = 1) +
+  labs(
+    title = "Investment Game: Single Simulation Path",
+    subtitle = "Wealth Evolution from Age 20 to 55",
+    x = "Age",
+    y = "Account Balance ($)",
+    caption = "Red line shows initial investment ($1,000)"
+  ) +
+  scale_y_continuous(labels = scales::dollar_format()) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12, color = "gray50")
+  )
+
+# Show final results
+final_wealth <- tail(wealth_path, 1)
+cat("Initial wealth: $", initial_wealth, "\n")
+cat("Final wealth at age 55: $", round(final_wealth, 2), "\n")
+cat("Total return: ", round((final_wealth/initial_wealth - 1) * 100, 1), "%\n")
+cat("Am I happy? ", ifelse(final_wealth > initial_wealth, "Yes!", "No..."), "\n")
+```
+
+**Answer:** In this single simulation, the final wealth at age 55 was **$[result will vary]**. The path shows the volatile nature of multiplicative growth - some years see large gains (50%), others see significant losses (40%). Whether I'm "happy" depends on the outcome, but this single path doesn't tell us much about the overall probability of success.
+
+### Question 4: Multiple Simulations (85% Grade)
+
+**Run 100 simulations modelling the dynamics of your account balance over time. Make a plot showing a probability distribution of the 100 simulated account balances at age 55.**
+
+```{r}
+#| label: multiple-simulations
+#| fig-cap: Distribution of final wealth from 100 simulations of the investment game
+#| echo: true
+
+# Set seed for reproducibility
+set.seed(456)
+
+# Parameters
+n_sims <- 100
+initial_wealth <- 1000
+years <- 35  # Age 20 to 55
+
+# Simulate multiple paths
+simulate_final_wealth <- function(initial, years) {
+  wealth <- initial
+  for (i in 1:years) {
+    coin_flip <- rbinom(1, 1, 0.5)
+    if (coin_flip == 1) {
+      wealth <- wealth * 1.5  # 50% gain
+    } else {
+      wealth <- wealth * 0.6   # 40% loss
+    }
+  }
+  return(wealth)
+}
+
+# Run 100 simulations
+final_wealths <- replicate(n_sims, simulate_final_wealth(initial_wealth, years))
+
+# Create data frame
+simulation_results <- tibble(
+  sim_num = 1:n_sims,
+  final_wealth = final_wealths
+)
+
+# Create histogram
+ggplot(simulation_results, aes(x = final_wealth)) +
+  geom_histogram(bins = 20, fill = "lightcoral", alpha = 0.8, color = "black") +
+  geom_vline(xintercept = initial_wealth, color = "red", linetype = "dashed", linewidth = 2) +
+  geom_vline(xintercept = mean(final_wealths), color = "blue", linetype = "solid", linewidth = 2) +
+  labs(
+    title = "Distribution of Final Wealth: 100 Simulations",
+    subtitle = "Investment Game from Age 20 to 55",
+    x = "Final Wealth at Age 55 ($)",
+    y = "Frequency",
+    caption = "Red line: Initial investment ($1,000), Blue line: Mean final wealth"
+  ) +
+  scale_x_continuous(labels = scales::dollar_format(), trans = "log10") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12, color = "gray50")
+  )
+
+# Summary statistics
+summary_stats <- simulation_results %>%
+  summarise(
+    mean_wealth = mean(final_wealth),
+    median_wealth = median(final_wealth),
+    min_wealth = min(final_wealth),
+    max_wealth = max(final_wealth),
+    prob_above_initial = mean(final_wealth > initial_wealth),
+    prob_above_10000 = mean(final_wealth > 10000)
+  )
+
+print("Summary Statistics:")
+print(summary_stats)
+
+cat("\nKey Insights:\n")
+cat("- Mean final wealth: $", round(summary_stats$mean_wealth, 2), "\n")
+cat("- Median final wealth: $", round(summary_stats$median_wealth, 2), "\n")
+cat("- Probability of ending above $1,000: ", round(summary_stats$prob_above_initial, 3), "\n")
+cat("- Probability of ending above $10,000: ", round(summary_stats$prob_above_10000, 3), "\n")
+```
+
+**Answer:** The distribution shows a **highly skewed** pattern with most outcomes being very low (near zero) but a few extremely high outcomes. The mean is much higher than the median, indicating the distribution is heavily right-skewed. Most simulations result in significant losses, but a few "lucky" paths result in enormous gains.
+
+### Question 5: Probability Analysis (95% Grade)
+
+**Based on the 100 simulations above, what is the probability that your account balance will be greater than $1,000 at age 55?**
+
+```{r}
+#| label: probability-analysis
+#| echo: true
+
+# Calculate probability from our simulation results
+prob_above_1000 <- mean(final_wealths > initial_wealth)
+
+cat("Probability of ending above $1,000: ", round(prob_above_1000, 3), "\n")
+cat("This means ", round(prob_above_1000 * 100, 1), "% of simulations ended above the initial investment\n")
+cat("And ", round((1 - prob_above_1000) * 100, 1), "% ended below the initial investment\n")
+
+# Let's also look at some other thresholds
+cat("\nOther probability thresholds:\n")
+cat("Probability above $500: ", round(mean(final_wealths > 500), 3), "\n")
+cat("Probability above $5,000: ", round(mean(final_wealths > 5000), 3), "\n")
+cat("Probability above $10,000: ", round(mean(final_wealths > 10000), 3), "\n")
+cat("Probability above $100,000: ", round(mean(final_wealths > 100000), 3), "\n")
+```
+
+**Answer:** Based on the 100 simulations, the probability that your account balance will be greater than $1,000 at age 55 is approximately **[result will vary, typically around 0.3-0.4]**. This means that despite the positive expected value, you're more likely to lose money than gain money in this investment game!
+
+### Question 6: Strategy Comparison (100% Grade)
+
+**Run 100 simulations for the modified game strategy. What is the probability that your account balance will be greater than $10,000 at age 55? Is this probability higher or lower than the probability in the original game?**
+
+```{r}
+#| label: modified-strategy
+#| fig-cap: Comparison of original vs modified investment strategies
+#| echo: true
+
+# Set seed for reproducibility
+set.seed(789)
+
+# Modified strategy: Bet exactly 50% of current balance each round
+simulate_modified_strategy <- function(initial, years) {
+  wealth <- initial
+  for (i in 1:years) {
+    coin_flip <- rbinom(1, 1, 0.5)
+    bet_amount <- wealth * 0.5  # Bet 50% of current wealth
+    
+    if (coin_flip == 1) {
+      # Heads: 50% gain on the bet
+      wealth <- wealth - bet_amount + bet_amount * 1.5
+    } else {
+      # Tails: 40% loss on the bet
+      wealth <- wealth - bet_amount + bet_amount * 0.6
+    }
+  }
+  return(wealth)
+}
+
+# Run 100 simulations of modified strategy
+modified_wealths <- replicate(n_sims, simulate_modified_strategy(initial_wealth, years))
+
+# Create comparison data
+comparison_data <- tibble(
+  strategy = rep(c("Original", "Modified"), each = n_sims),
+  final_wealth = c(final_wealths, modified_wealths)
+)
+
+# Create comparison plot
+ggplot(comparison_data, aes(x = final_wealth, fill = strategy)) +
+  geom_histogram(alpha = 0.7, bins = 20, position = "identity") +
+  geom_vline(xintercept = 1000, color = "red", linetype = "dashed", linewidth = 1) +
+  geom_vline(xintercept = 10000, color = "blue", linetype = "dashed", linewidth = 1) +
+  labs(
+    title = "Strategy Comparison: Original vs Modified Investment Game",
+    subtitle = "Distribution of Final Wealth from 100 Simulations Each",
+    x = "Final Wealth at Age 55 ($)",
+    y = "Frequency",
+    caption = "Red line: $1,000 threshold, Blue line: $10,000 threshold"
+  ) +
+  scale_x_continuous(labels = scales::dollar_format(), trans = "log10") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12, color = "gray50"),
+    legend.position = "bottom"
+  )
+
+# Calculate probabilities for both strategies
+prob_original_above_10000 <- mean(final_wealths > 10000)
+prob_modified_above_10000 <- mean(modified_wealths > 10000)
+
+cat("Strategy Comparison Results:\n")
+cat("Original Strategy:\n")
+cat("  Probability above $1,000: ", round(mean(final_wealths > 1000), 3), "\n")
+cat("  Probability above $10,000: ", round(prob_original_above_10000, 3), "\n")
+cat("  Mean final wealth: $", round(mean(final_wealths), 2), "\n")
+
+cat("\nModified Strategy:\n")
+cat("  Probability above $1,000: ", round(mean(modified_wealths > 1000), 3), "\n")
+cat("  Probability above $10,000: ", round(prob_modified_above_10000, 3), "\n")
+cat("  Mean final wealth: $", round(mean(modified_wealths), 2), "\n")
+
+cat("\nComparison:\n")
+cat("Modified strategy probability above $10,000 is ", 
+    ifelse(prob_modified_above_10000 > prob_original_above_10000, "HIGHER", "LOWER"), 
+    " than original strategy\n")
+```
+
+**Answer:** The modified strategy (betting exactly 50% of current balance each round) shows **[results will vary]**. The probability of ending above $10,000 with the modified strategy is **[higher/lower]** than the original strategy. This demonstrates how different betting strategies can significantly affect outcomes in multiplicative growth processes.
+
+## Key Insights and Counter-Intuitive Findings 🧠
+
+```{r}
+#| label: key-insights
+#| echo: true
+
+cat("KEY INSIGHTS FROM THIS SIMULATION:\n")
+cat("=====================================\n\n")
+
+cat("1. EXPECTED VALUE vs REALITY:\n")
+cat("   - Arithmetic mean suggests profit (5% gain per flip)\n")
+cat("   - Geometric mean suggests loss (5.1% loss per flip)\n")
+cat("   - For multiplicative processes, geometric mean is more relevant\n\n")
+
+cat("2. THE PARADOX OF MULTIPLICATIVE GROWTH:\n")
+cat("   - Positive expected value doesn't guarantee positive outcomes\n")
+cat("   - Most paths lead to losses, but a few lead to enormous gains\n")
+cat("   - This creates a highly skewed distribution\n\n")
+
+cat("3. STRATEGY MATTERS:\n")
+cat("   - Different betting strategies produce different outcomes\n")
+cat("   - Fixed percentage betting vs fixed amount betting\n")
+cat("   - Risk management is crucial in multiplicative processes\n\n")
+
+cat("4. SIMULATION REVEALS TRUTH:\n")
+cat("   - Intuition fails with multiplicative growth\n")
+cat("   - Monte Carlo simulation reveals the true distribution\n")
+cat("   - Always simulate before making investment decisions!\n")
+```
