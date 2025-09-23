@@ -242,7 +242,7 @@ cat("- Probability of ending above $1,000: ", round(summary_stats$prob_above_ini
 cat("- Probability of ending above $10,000: ", round(summary_stats$prob_above_10000, 3), "\n")
 ```
 
-**Answer:** The distribution shows a **highly skewed** pattern with most outcomes being very low (near zero) but a few extremely high outcomes. The mean is much higher than the median, indicating the distribution is heavily right-skewed. Most simulations result in significant losses, but a few "lucky" paths result in enormous gains.
+**Answer:** The distribution shows most outcomes being very low (near zero) but with a few extremely high outcomes. The mean is much higher than the median, indicating the distribution is heavily right-skewed. Most simulations result in significant losses, but a few "lucky" paths result in enormous gains.
 
 ### Question 5: Probability Analysis (95% Grade)
 
