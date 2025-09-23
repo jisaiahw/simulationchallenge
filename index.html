@@ -1,492 +1,1541 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulation Challenge - Monte Carlo Analysis</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #7f8c8d;
-            font-size: 1.2em;
-            margin-bottom: 30px;
-        }
-        h2 {
-            color: #34495e;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-        h3 {
-            color: #2c3e50;
-        }
-        .callout {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        .callout-warning {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-        }
-        .callout-tip {
-            background-color: #d1ecf1;
-            border-color: #bee5eb;
-        }
-        .code-block {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 15px 0;
-            font-family: 'Courier New', monospace;
-            overflow-x: auto;
-        }
-        .math {
-            font-family: 'Times New Roman', serif;
-            font-style: italic;
-        }
-        ul, ol {
-            margin: 15px 0;
-        }
-        li {
-            margin: 8px 0;
-        }
-        .emoji {
-            font-size: 1.2em;
-        }
-        .highlight {
-            background-color: #fff3cd;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-    </style>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.21">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Simulation Challenge</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="index_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="index_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="index_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="index_files/libs/quarto-html/popper.min.js"></script>
+<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="index_files/libs/quarto-html/anchor.min.js"></script>
+<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-ea1d7ac60288e0f1efdbc993fd8432ae.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="index_files/libs/bootstrap/bootstrap-9e3ffae467580fdb927a41352e75a2e0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 </head>
-<body>
-    <div class="container">
-        <h1>🎲 Simulation Challenge - Monte Carlo Analysis</h1>
-        <p class="subtitle">Generative Models and Monte Carlo Simulation</p>
 
-        <h2>Challenge Overview</h2>
-        <p><strong>Your Mission:</strong> Create a comprehensive Quarto document that simulates one or two investment strategies, analyzes the results, and demonstrates your ability to present counter-intuitive findings compellingly. Then render the document to HTML and deploy it via GitHub Pages from a new repository called "simulationChallenge."</p>
+<body class="quarto-light">
 
-        <div class="callout callout-warning">
-            <h3>⚠️ AI Partnership Required</h3>
-            <p>This challenge pushes boundaries intentionally. You'll tackle problems that normally require weeks of study, but with Cursor AI as your partner (and your brain keeping it honest), you can accomplish more than you thought possible.</p>
-            <p><strong>The new reality:</strong> The four stages of competence are Ignorance → Awareness → Learning → Mastery. AI lets us produce Mastery-level work while operating primarily in the Awareness stage. I focus on awareness training, you leverage AI for execution, and together we create outputs that used to require years of dedicated study.</p>
-        </div>
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="index.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
+<main class="content" id="quarto-document-content">
 
-        <h2>The Investment Game 🎯</h2>
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Simulation Challenge</h1>
+<p class="subtitle lead">Generative Models and Monte Carlo Simulation</p>
+</div>
 
-        <h3>Original Game Strategy</h3>
-        <div class="callout">
-            <p>Imagine you are offered the following game and given a $1,000 budget in a special account to play the game: I will flip a coin, and if it comes up heads, we increase your account's balance by 50%; if it comes up tails, we reduce your account's balance by 40%. We are not only doing this once, but we will do it once per year until you turn 55. When you turn 55, you will receive the balance in your account.</p>
-        </div>
 
-        <h3>Generative Model for the Investment Game</h3>
-        <p>The investment game can be modeled as a generative process where:</p>
-        <ul>
-            <li><strong>Initial Wealth:</strong> <span class="math">W₀ = 1000</span> (deterministic)</li>
-            <li><strong>Coin Flip:</strong> <span class="math">Cₜ ~ Bernoulli(0.5)</span> for each time period <span class="math">t</span></li>
-            <li><strong>Wealth Evolution:</strong>
-                <ul>
-                    <li>If <span class="math">Cₜ = 1</span> (heads): <span class="math">Wₜ = 1.5 × Wₜ₋₁</span> (50% gain)</li>
-                    <li>If <span class="math">Cₜ = 0</span> (tails): <span class="math">Wₜ = 0.6 × Wₜ₋₁</span> (40% loss)</li>
-                </ul>
-            </li>
-        </ul>
-        <p>This multiplicative process means wealth compounds over time, making each coin flip's impact dependent on the current wealth level.</p>
 
-        <h2>Challenge Requirements 📋</h2>
+<div class="quarto-title-meta">
 
-        <h3>Minimum Requirements for Any Points on Challenge</h3>
-        <ol>
-            <li><strong>Create a Quarto Document:</strong> Write a concise quarto markdown file that includes a narrative of what you are doing along with the requested code, results, and visualizations of your simulations.</li>
-            <li><strong>Render to HTML:</strong> You must render the quarto markdown file to HTML.</li>
-            <li><strong>GitHub Repository:</strong> The rendered HTML must be uploaded to a new GitHub repository called "simulationChallenge" in your Github account.</li>
-            <li><strong>GitHub Pages Setup:</strong> The repository should be made the source of your github pages:
-                <ul>
-                    <li>Go to your repository settings (click the "Settings" tab in your GitHub repository)</li>
-                    <li>Scroll down to the "Pages" section in the left sidebar</li>
-                    <li>Under "Source", select "Deploy from a branch"</li>
-                    <li>Choose "main" branch and "/ (root)" folder</li>
-                    <li>Click "Save"</li>
-                    <li>Your site will be available at: <span class="highlight">https://[your-username].github.io/simulationChallenge/</span></li>
-                </ul>
-            </li>
-        </ol>
-
-        <h2>Grading Rubric 🎓</h2>
-
-        <h3>Questions to Answer for 75% Grade on Challenge</h3>
-        <ol>
-            <li><strong>Expected Value Analysis:</strong> What is the "expected value" of your account balance after 1 coin flip for the original game?</li>
-            <li><strong>Expectation vs. Reality:</strong> Is the expected value positive or negative? Do you expect your account to be worth more or less than $1,000 based on this result?</li>
-            <li><strong>Single Simulation:</strong> Run one simulation showing the dynamics of your account balance over time. Make an object-oriented matplotlib OR ggplot2 plot showing your simulated account balance over time (i.e. as you age). Comment on the results, are you happy?</li>
-        </ol>
-
-        <h3>Questions to Answer for 85% Grade on Challenge</h3>
-        <ol start="4">
-            <li><strong>Multiple Simulations:</strong> Run 100 simulations modelling the dynamics of your account balance over time. Make an object-oriented matplotlib OR ggplot2 plot showing a probability distribution of the 100 simulated account balance at age 55. Comment on the results, are you happy? Why or why not?</li>
-        </ol>
-
-        <h3>Questions to Answer for 95% Grade on Challenge</h3>
-        <ol start="5">
-            <li><strong>Probability Analysis:</strong> Based on the 100 simulations above, what is the probability that your account balance will be greater than $1,000 at age 55?</li>
-        </ol>
-
-        <h3>Questions to Answer for 100% Grade on Challenge</h3>
-        <ol start="6">
-            <li><strong>Strategy Comparison:</strong> Run 100 simulations for the modified game strategy shown below. What is the probability that your account balance will be greater than $10,000 at age 55? Is this probability higher or lower than the probability in the original game?</li>
-        </ol>
-
-        <h3>Modified Game Strategy</h3>
-        <div class="callout">
-            <p>Imagine you are offered the following game and given a $1,000 budget in a special account to play the game: I will flip a coin, and if it comes up heads, we increase your bet by 50%; if it comes up tails, we reduce your bet by 40%. You must bet exactly 50% of your current account balance on each flip, and this 50% is locked in for each round. We are not only doing this once, but we will do it once per year until you turn 55. When you turn 55, you will receive the balance in your account.</p>
-        </div>
-
-        <h2>Technical Implementation Preferences 💡</h2>
-
-        <h3>Setting Up Your Analysis</h3>
-        <p><strong>For R Users:</strong></p>
-        <ul>
-            <li>Use <code>tidyverse</code> for data manipulation</li>
-            <li>Use <code>ggplot2</code> for visualizations</li>
-            <li>Use <code>set.seed()</code> for reproducible results</li>
-        </ul>
-
-        <p><strong>For Python Users:</strong></p>
-        <ul>
-            <li>Use <code>numpy</code> for numerical operations</li>
-            <li>Use <code>pandas</code> for data manipulation</li>
-            <li>Use <code>matplotlib</code> (object-oriented)</li>
-            <li>Use <code>np.random.seed()</code> for reproducible results</li>
-        </ul>
-
-        <h2>Essential Simulation Concepts 🎯</h2>
-
-        <h3>1. Simple Simulation: Coin Flip Game</h3>
-        <p>Let's start with a basic coin flip simulation to understand the mechanics:</p>
-
-        <h4>Generative Model for the Simple Coin Flip Game</h4>
-        <p>The simple coin flip game can be modeled as:</p>
-        <ul>
-            <li><strong>Coin Flip:</strong> <span class="math">X ~ Bernoulli(0.5)</span> (stochastic)</li>
-            <li><strong>Winnings:</strong> <span class="math">W = 100</span> if <span class="math">X = 1</span> (heads), otherwise <span class="math">W = -100</span> (tails)</li>
-        </ul>
-        <p>This is an additive game where each flip results in a fixed gain or loss.</p>
-
-        <div class="code-block">
-# R Simulation Example
-set.seed(123)
-n_sims <- 10
-
-sim_data <- data.frame(
-  sim_num = 1:n_sims,
-  coin_flip = rbinom(n = n_sims, size = 1, prob = 0.5)
-)
-
-sim_data$winnings <- ifelse(sim_data$coin_flip == 1, 100, -100)
-print(sim_data)
-        </div>
-
-        <h3>2. Time-Series Simulation: Account Balance Over Time</h3>
-        <p>Now let's simulate how an account balance changes over multiple periods:</p>
-
-        <h4>Generative Model for Time-Series Account Balance</h4>
-        <p>The time-series simulation can be modeled as:</p>
-        <ul>
-            <li><strong>Initial Balance:</strong> <span class="math">B₀ = 1000</span> (deterministic)</li>
-            <li><strong>Coin Flip:</strong> <span class="math">Cₜ ~ Bernoulli(0.5)</span> for each period <span class="math">t</span></li>
-            <li><strong>Balance Evolution:</strong>
-                <ul>
-                    <li>If <span class="math">Cₜ = 1</span> (heads): <span class="math">Bₜ = Bₜ₋₁ + 100</span> (add $100)</li>
-                    <li>If <span class="math">Cₜ = 0</span> (tails): <span class="math">Bₜ = Bₜ₋₁ - 100</span> (subtract $100)</li>
-                </ul>
-            </li>
-        </ul>
-        <p>This is an additive process where each period's balance depends on the previous balance plus a fixed amount.</p>
-
-        <h3>3. Probability Distribution: Final Balance Distribution</h3>
-        <p>Let's see what the distribution of final balances looks like across many simulations:</p>
-
-        <div class="code-block">
-# R Multiple Simulations Example
-set.seed(789)
-initial_balance <- 1000
-n_periods <- 10
-n_sims <- 100
-
-simulate_final_balance <- function(initial, periods) {
-  balance <- initial
-  for (i in 1:periods) {
-    coin_flip <- rbinom(1, 1, 0.5)
-    if (coin_flip == 1) {
-      balance <- balance + 100
-    } else {
-      balance <- balance - 100
-    }
-  }
-  return(balance)
-}
-
-final_balances <- replicate(n_sims, simulate_final_balance(initial_balance, n_periods))
-
-# Summary statistics
-mean_balance <- mean(final_balances)
-prob_above_initial <- mean(final_balances > initial_balance)
-
-cat("Mean balance: $", mean_balance, "\n")
-cat("Probability above initial: ", prob_above_initial, "\n")
-        </div>
-
-        <h2>Getting Started Tips</h2>
-        <div class="callout callout-tip">
-            <h3>🎯 Navy SEALs Motto</h3>
-            <blockquote>"Slow is Smooth and Smooth is Fast"</blockquote>
-            <p><em>Take your time to understand the simulation mechanics, plan your approach carefully, and execute with precision. Rushing through this challenge will only lead to errors and confusion.</em></p>
-        </div>
-
-        <ul>
-            <li><strong>Start Simple:</strong> Begin with a single simulation to understand the mechanics</li>
-            <li><strong>Document Everything:</strong> Explain your reasoning and interpret your results</li>
-            <li><strong>Don't Forget Seeds:</strong> Always set random seeds for reproducible results</li>
-            <li><strong>Total time to complete:</strong> ~3-4 hours for the 100% grade ⏱️</li>
-            <li><strong>Good luck, and remember simulation will steer you right even when intuition will steer you wrong!</strong> 🎲</li>
-        </ul>
-
-        <div class="callout callout-warning">
-            <h3>💾 Important: Save Your Work Frequently!</h3>
-            <p><strong>Before you start coding:</strong> Make sure to commit your work often using the Source Control panel in Cursor (Ctrl+Shift+G or Cmd+Shift+G). This prevents the AI from overwriting your progress and ensures you don't lose your work.</p>
-            <p><strong>Commit after each major step:</strong></p>
-            <ul>
-                <li>After completing each simulation example</li>
-                <li>After finishing each challenge question</li>
-                <li>Before asking the AI for help with new code</li>
-            </ul>
-            <p><em>Remember: Frequent commits are your safety net!</em></p>
-        </div>
-
-        <h2>Challenge Solutions 🎯</h2>
-        <p>Now let's work through each of the challenge questions systematically:</p>
-
-        <h3>Question 1: Expected Value Analysis (75% Grade)</h3>
-        <p><strong>What is the "expected value" of your account balance after 1 coin flip for the original game?</strong></p>
-        
-        <div class="code-block">
-# Expected value calculation for one coin flip
-initial_wealth <- 1000
-prob_heads <- 0.5
-prob_tails <- 0.5
-
-# If heads: wealth becomes 1.5 * initial_wealth
-wealth_if_heads <- 1.5 * initial_wealth  # $1,500
-
-# If tails: wealth becomes 0.6 * initial_wealth  
-wealth_if_tails <- 0.6 * initial_wealth  # $600
-
-# Expected value = probability * outcome for each scenario
-expected_value <- prob_heads * wealth_if_heads + prob_tails * wealth_if_tails
-# Expected value = 0.5 * $1,500 + 0.5 * $600 = $1,050
-        </div>
-
-        <p><strong>Answer:</strong> The expected value after 1 coin flip is <strong>$1,050</strong>. This is calculated as:</p>
-        <ul>
-            <li>50% chance of $1,500 (heads: 50% gain)</li>
-            <li>50% chance of $600 (tails: 40% loss)</li>
-            <li>Expected value = 0.5 × $1,500 + 0.5 × $600 = $1,050</li>
-        </ul>
-
-        <h3>Question 2: Expectation vs. Reality (75% Grade)</h3>
-        <p><strong>Is the expected value positive or negative? Do you expect your account to be worth more or less than $1,000 based on this result?</strong></p>
-
-        <div class="code-block">
-# Expected return per flip
-expected_return <- (1.5 * 0.5) + (0.6 * 0.5)  # = 1.05 (5% gain)
-
-# But what about the geometric mean?
-# For multiplicative processes, we should consider the geometric mean
-geometric_mean <- sqrt(1.5 * 0.6)  # = sqrt(0.9) ≈ 0.949 (5.1% loss)
-        </div>
-
-        <p><strong>Answer:</strong></p>
-        <ul>
-            <li><strong>Expected value is positive</strong> ($1,050 > $1,000)</li>
-            <li><strong>However, this is misleading!</strong> The arithmetic mean suggests a 5% gain per flip</li>
-            <li><strong>But the geometric mean</strong> (√(1.5 × 0.6) = √0.9 ≈ 0.949) suggests a <strong>5.1% loss per flip</strong></li>
-            <li><strong>Key insight:</strong> For multiplicative processes like wealth accumulation, the geometric mean is more relevant than the arithmetic mean</li>
-        </ul>
-
-        <h3>Question 3: Single Simulation (75% Grade)</h3>
-        <p><strong>Run one simulation showing the dynamics of your account balance over time. Make a plot showing your simulated account balance over time. Comment on the results.</strong></p>
-
-        <div class="code-block">
-# Simulate one path of the investment game
-simulate_investment_path <- function(initial, years) {
-  wealth <- initial
-  path <- numeric(years + 1)
-  path[1] <- initial
-  
-  for (i in 1:years) {
-    coin_flip <- rbinom(1, 1, 0.5)
-    if (coin_flip == 1) {
-      wealth <- wealth * 1.5  # 50% gain
-    } else {
-      wealth <- wealth * 0.6   # 40% loss
-    }
-    path[i + 1] <- wealth
-  }
-  return(path)
-}
-
-# Run single simulation (age 20 to 55 = 35 years)
-wealth_path <- simulate_investment_path(1000, 35)
-        </div>
-
-        <div style="text-align: center; margin: 20px 0;">
-            <img src="single_simulation.png" alt="Single Simulation Plot" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px;">
-            <p style="font-style: italic; color: #666; margin-top: 10px;">Figure 1: Single simulation showing wealth evolution from age 20 to 55</p>
-        </div>
-
-        <p><strong>Answer:</strong> In this single simulation, the final wealth at age 55 was <strong>$24,429.47</strong> (a 2,342.9% return!). The path shows the volatile nature of multiplicative growth - some years see large gains (50%), others see significant losses (40%). This was a "lucky" path, but this single simulation doesn't tell us much about the overall probability of success.</p>
-
-        <h3>Question 4: Multiple Simulations (85% Grade)</h3>
-        <p><strong>Run 100 simulations modelling the dynamics of your account balance over time. Make a plot showing a probability distribution of the 100 simulated account balances at age 55.</strong></p>
-
-        <div class="code-block">
-# Run 100 simulations
-n_sims <- 100
-final_wealths <- replicate(n_sims, simulate_final_wealth(1000, 35))
-
-# Create histogram showing distribution
-ggplot(simulation_results, aes(x = final_wealth)) +
-  geom_histogram(bins = 20, fill = "lightcoral", alpha = 0.8, color = "black") +
-  geom_vline(xintercept = 1000, color = "red", linetype = "dashed", linewidth = 2) +
-  labs(title = "Distribution of Final Wealth: 100 Simulations")
-        </div>
-
-        <div style="text-align: center; margin: 20px 0;">
-            <img src="multiple_simulations.png" alt="Multiple Simulations Plot" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px;">
-            <p style="font-style: italic; color: #666; margin-top: 10px;">Figure 2: Distribution of final wealth from 100 simulations (log scale)</p>
-        </div>
-
-        <p><strong>Answer:</strong> The distribution shows a <strong>highly skewed</strong> pattern with most outcomes being very low (near zero) but a few extremely high outcomes. The mean ($3,282) is much higher than the median ($250), indicating the distribution is heavily right-skewed. Most simulations result in significant losses, but a few "lucky" paths result in enormous gains.</p>
-
-        <h3>Question 5: Probability Analysis (95% Grade)</h3>
-        <p><strong>Based on the 100 simulations above, what is the probability that your account balance will be greater than $1,000 at age 55?</strong></p>
-
-        <div class="code-block">
-# Calculate probability from simulation results
-prob_above_1000 <- mean(final_wealths > 1000)
-cat("Probability of ending above $1,000: ", prob_above_1000)
-        </div>
-
-        <p><strong>Answer:</strong> Based on the 100 simulations, the probability that your account balance will be greater than $1,000 at age 55 is approximately <strong>0.3-0.4</strong> (30-40%). This means that despite the positive expected value, you're more likely to lose money than gain money in this investment game!</p>
-
-        <h3>Question 6: Strategy Comparison (100% Grade)</h3>
-        <p><strong>Run 100 simulations for the modified game strategy. What is the probability that your account balance will be greater than $10,000 at age 55? Is this probability higher or lower than the probability in the original game?</strong></p>
-
-        <div class="code-block">
-# Modified strategy: Bet exactly 50% of current balance each round
-simulate_modified_strategy <- function(initial, years) {
-  wealth <- initial
-  for (i in 1:years) {
-    coin_flip <- rbinom(1, 1, 0.5)
-    bet_amount <- wealth * 0.5  # Bet 50% of current wealth
     
-    if (coin_flip == 1) {
-      # Heads: 50% gain on the bet
-      wealth <- wealth - bet_amount + bet_amount * 1.5
-    } else {
-      # Tails: 40% loss on the bet
-      wealth <- wealth - bet_amount + bet_amount * 0.6
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="simulation-challenge---monte-carlo-analysis" class="level1">
+<h1>🎲 Simulation Challenge - Monte Carlo Analysis</h1>
+<section id="challenge-overview" class="level2">
+<h2 class="anchored" data-anchor-id="challenge-overview">Challenge Overview</h2>
+<p><strong>Your Mission:</strong> Create a comprehensive Quarto document that simulates one or two investment strategies, analyzes the results, and demonstrates your ability to present counter-intuitive findings compellingly. Then render the document to HTML and deploy it via GitHub Pages from a new repository called “simulationChallenge.”</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>⚠️ AI Partnership Required
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This challenge pushes boundaries intentionally. You’ll tackle problems that normally require weeks of study, but with Cursor AI as your partner (and your brain keeping it honest), you can accomplish more than you thought possible.</p>
+<p><strong>The new reality:</strong> The four stages of competence are Ignorance → Awareness → Learning → Mastery. AI lets us produce Mastery-level work while operating primarily in the Awareness stage. I focus on awareness training, you leverage AI for execution, and together we create outputs that used to require years of dedicated study.</p>
+</div>
+</div>
+</section>
+<section id="the-investment-game" class="level2">
+<h2 class="anchored" data-anchor-id="the-investment-game">The Investment Game 🎯</h2>
+<section id="original-game-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="original-game-strategy">Original Game Strategy</h3>
+<div id="exm-ErgodicityEconomicsExample" class="theorem example">
+<p><span class="theorem-title"><strong>Example 1</strong></span> Imagine you are offered the following game and given a $1,000 budget in a special account to play the game: I will flip a coin, and if it comes up heads, we increase your account’s balance by 50%; if it comes up tails, we reduce your account’s balance by 40%. We are not only doing this once, but we will do it once per year until you turn 55. When you turn 55, you will receive the balance in your account.</p>
+</div>
+</section>
+<section id="generative-dag-model-for-the-investment-game" class="level3">
+<h3 class="anchored" data-anchor-id="generative-dag-model-for-the-investment-game">Generative DAG Model for the Investment Game</h3>
+<p>The investment game can be modeled as a generative process where: - <strong>Initial Wealth</strong>: <span class="math inline">\(W_0 = 1000\)</span> (deterministic) - <strong>Coin Flip</strong>: <span class="math inline">\(C_t \sim \text{Bernoulli}(0.5)\)</span> for each time period <span class="math inline">\(t\)</span> - <strong>Wealth Evolution</strong>: - If <span class="math inline">\(C_t = 1\)</span> (heads): <span class="math inline">\(W_t = 1.5 \times W_{t-1}\)</span> (50% gain) - If <span class="math inline">\(C_t = 0\)</span> (tails): <span class="math inline">\(W_t = 0.6 \times W_{t-1}\)</span> (40% loss)</p>
+<p>This multiplicative process means wealth compounds over time, making each coin flip’s impact dependent on the current wealth level.</p>
+</section>
+</section>
+<section id="challenge-requirements" class="level2">
+<h2 class="anchored" data-anchor-id="challenge-requirements">Challenge Requirements 📋</h2>
+<section id="minimum-requirements-for-any-points-on-challenge" class="level3">
+<h3 class="anchored" data-anchor-id="minimum-requirements-for-any-points-on-challenge">Minimum Requirements for Any Points on Challenge</h3>
+<ol type="1">
+<li><p><strong>Create a Quarto Document:</strong> Write a concise quarto markdown file that includes a narrative of what you are doing along with the requested code, results, and visualizations of your simulations.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>💡 Pro Tip: Source File Reference
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Need help with Quarto syntax or DAFT diagrams?</strong> You can find the complete source <code>.qmd</code> file for this challenge at:</p>
+<p><strong>GitHub Repository:</strong> <a href="https://github.com/flyaflya/buad442Fall2025/blob/main/challenges/03-Simulation-Challenge/simulationChallenge.qmd">flyaflya/buad442Fall2025/challenges/03-Simulation-Challenge/simulationChallenge.qmd</a></p>
+<p>This is a great resource for understanding Quarto syntax, seeing how DAFT diagrams are implemented, and learning from the complete working example!</p>
+</div>
+</div></li>
+<li><p><strong>Render to HTML:</strong> You must render the quarto markdown file to HTML.</p></li>
+<li><p><strong>GitHub Repository:</strong> The rendered HTML must be uploaded to a new GitHub repository called “simulationChallenge” in your Github account.</p></li>
+<li><p><strong>GitHub Pages Setup:</strong> The repository should be made the source of your github pages:</p>
+<ul>
+<li>Go to your repository settings (click the “Settings” tab in your GitHub repository)</li>
+<li>Scroll down to the “Pages” section in the left sidebar</li>
+<li>Under “Source”, select “Deploy from a branch”</li>
+<li>Choose “main” branch and “/ (root)” folder</li>
+<li>Click “Save”</li>
+<li>Your site will be available at: <code>https://jisaiahw.github.io/simulationchallenge/</code></li>
+<li><strong>Note:</strong> It may take a few minutes for the site to become available after enabling Pages</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="grading-rubric" class="level2">
+<h2 class="anchored" data-anchor-id="grading-rubric">Grading Rubric 🎓</h2>
+<section id="questions-to-answer-for-75-grade-on-challenge" class="level3">
+<h3 class="anchored" data-anchor-id="questions-to-answer-for-75-grade-on-challenge">Questions to Answer for 75% Grade on Challenge</h3>
+<ol type="1">
+<li><strong>Expected Value Analysis:</strong> What is the “expected value” of your account balance after 1 coin flip for the original game? ##$1.050</li>
+<li><strong>Expectation vs.&nbsp;Reality:</strong> Is the expected value positive or negative? Do you expect your account to be worth more or less than $1,000 based on this result? ##Positive; we gained $50</li>
+<li><strong>Single Simulation:</strong> Run one simulation showing the dynamics of your account balance over time. Make an object-oriented matplotlib OR ggplot2 plot showing your simulated account balance over time (i.e.&nbsp;as you age). Comment on the results, are you happy?</li>
+</ol>
+</section>
+<section id="questions-to-answer-for-85-grade-on-challenge" class="level3">
+<h3 class="anchored" data-anchor-id="questions-to-answer-for-85-grade-on-challenge">Questions to Answer for 85% Grade on Challenge</h3>
+<ol start="4" type="1">
+<li><strong>Multiple Simulations:</strong> Run 100 simulations modelling the dynamics of your account balance over time. Make an object-oriented matplotlib OR ggplot2 plot showing a probability distribution of the 100 simulatedaccount balance at age 55. Comment on the results, are you happy? Why or why not?</li>
+</ol>
+</section>
+<section id="questions-to-answer-for-95-grade-on-challenge" class="level3">
+<h3 class="anchored" data-anchor-id="questions-to-answer-for-95-grade-on-challenge">Questions to Answer for 95% Grade on Challenge</h3>
+<ol start="5" type="1">
+<li><strong>Probability Analysis:</strong> Based on the 100 simulations above, what is the probability that your account balance will be greater than $1,000 at age 55?</li>
+</ol>
+</section>
+<section id="questions-to-answer-for-100-grade-on-challenge" class="level3">
+<h3 class="anchored" data-anchor-id="questions-to-answer-for-100-grade-on-challenge">Questions to Answer for 100% Grade on Challenge</h3>
+<ol start="6" type="1">
+<li><strong>Strategy Comparison:</strong> Run 100 simulations for the modified game strategy shown below in <a href="#exm-ErgodicityEconomicsExampleModified" class="quarto-xref">Example&nbsp;2</a>. What is the probability that your account balance will be greater than $10,000 at age 55? Is this probability higher or lower than the probability in the original game?</li>
+</ol>
+</section>
+<section id="modified-game-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="modified-game-strategy">Modified Game Strategy</h3>
+<div id="exm-ErgodicityEconomicsExampleModified" class="theorem example">
+<p><span class="theorem-title"><strong>Example 2</strong></span> Imagine you are offered the following game and given a $1,000 budget in a special account to play the game: I will flip a coin, and if it comes up heads, we increase your bet by 50%; if it comes up tails, we reduce your bet by 40%. You must bet exactly 50% of your current account balance on each flip, and this 50% is locked in for each round. We are not only doing this once, but we will do it once per year until you turn 55. When you turn 55, you will receive the balance in your account.</p>
+</div>
+</section>
+</section>
+<section id="technical-implementation-preferences" class="level2">
+<h2 class="anchored" data-anchor-id="technical-implementation-preferences">Technical Implementation Preferences 💡</h2>
+<section id="setting-up-your-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="setting-up-your-analysis">Setting Up Your Analysis</h3>
+<p><strong>For R Users:</strong></p>
+<ul>
+<li>Use <code>tidyverse</code> for data manipulation</li>
+<li>Use <code>ggplot2</code> for visualizations</li>
+<li>Use <code>set.seed()</code> for reproducible results</li>
+</ul>
+<p><strong>For Python Users:</strong></p>
+<ul>
+<li>Use <code>numpy</code> for numerical operations</li>
+<li>Use <code>pandas</code> for data manipulation</li>
+<li>Use <code>matplotlib</code> (object-oriented)</li>
+<li>Use <code>np.random.seed()</code> for reproducible results</li>
+</ul>
+</section>
+<section id="visualization-preferences" class="level3">
+<h3 class="anchored" data-anchor-id="visualization-preferences">Visualization Preferences</h3>
+<ul>
+<li><strong>Professional Styling:</strong> Use consistent colors, clear labels, readable fonts, and informative titles</li>
+</ul>
+</section>
+</section>
+<section id="submission-checklist" class="level2">
+<h2 class="anchored" data-anchor-id="submission-checklist">Submission Checklist ✅</h2>
+<p><strong>Minimum Requirements (Required for Any Points):</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox">Quarto document created with clear narrative</label></li>
+<li><label><input type="checkbox">Document rendered to HTML successfully</label></li>
+<li><label><input type="checkbox">Repository “simulationChallenge” created</label></li>
+<li><label><input type="checkbox">HTML files uploaded to repository</label></li>
+<li><label><input type="checkbox">GitHub Pages enabled and working</label></li>
+<li><label><input type="checkbox">Site accessible at <code>https://[your-username].github.io/simulationChallenge/</code></label></li>
+</ul>
+<p><strong>75% Grade Requirements:</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox">Expected value calculations shown (Question 1)</label></li>
+<li><label><input type="checkbox">Expectation vs.&nbsp;reality analysis (Question 2)</label></li>
+<li><label><input type="checkbox">Single simulation with time series plot (Question 3)</label></li>
+<li><label><input type="checkbox">Clear interpretation of single simulation results</label></li>
+</ul>
+<p><strong>85% Grade Requirements:</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox">100 simulations with distribution analysis (Question 4)</label></li>
+<li><label><input type="checkbox">Probability distribution plot of final account balances</label></li>
+<li><label><input type="checkbox">Clear interpretation of multiple simulation results</label></li>
+</ul>
+<p><strong>95% Grade Requirements:</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox">Probability calculations for original strategy (Question 5)</label></li>
+<li><label><input type="checkbox">Analysis of probability that balance &gt; $1,000 at age 55</label></li>
+</ul>
+<p><strong>100% Grade Requirements:</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox">100 simulations for modified strategy (Question 6)</label></li>
+<li><label><input type="checkbox">Probability calculations for modified strategy</label></li>
+<li><label><input type="checkbox">Comparative analysis between both strategies</label></li>
+<li><label><input type="checkbox">Analysis of probability that balance &gt; $10,000 at age 55</label></li>
+</ul>
+<p><strong>Code Quality (All Grades):</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox">Reproducible results (seeds set)</label></li>
+<li><label><input type="checkbox">Clean, well-commented code</label></li>
+<li><label><input type="checkbox">Appropriate use of functions and loops</label></li>
+<li><label><input type="checkbox">Professional visualization styling</label></li>
+</ul>
+<section id="resources" class="level3">
+<h3 class="anchored" data-anchor-id="resources">Resources</h3>
+<ul>
+<li><strong>Quarto Markdown:</strong> <a href="https://quarto.org/docs/authoring/markdown-basics.html">quarto.org/docs/authoring/markdown-basics.html</a></li>
+<li><strong>Quarto Documentation:</strong> <a href="https://quarto.org/docs">quarto.org/docs</a></li>
+<li><strong>R for Data Science:</strong> <a href="https://r4ds.had.co.nz">r4ds.had.co.nz</a></li>
+<li><strong>Python Data Science Handbook:</strong> <a href="https://jakevdp.github.io/PythonDataScienceHandbook">jakevdp.github.io/PythonDataScienceHandbook</a></li>
+</ul>
+</section>
+<section id="getting-started-tips" class="level3">
+<h3 class="anchored" data-anchor-id="getting-started-tips">Getting Started Tips</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>🎯 Navy SEALs Motto
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<blockquote class="blockquote">
+<p>“Slow is Smooth and Smooth is Fast”</p>
+</blockquote>
+<p><em>Take your time to understand the simulation mechanics, plan your approach carefully, and execute with precision. Rushing through this challenge will only lead to errors and confusion.</em></p>
+</div>
+</div>
+<ul>
+<li><strong>Browse <a href="@sec-simulation-concepts">Essential Simulation Concepts</a>:</strong> This section will give you a good understanding of the concepts you need to know to complete the challenge.</li>
+<li><strong>Start Simple:</strong> Begin with a single simulation to understand the mechanics</li>
+<li><strong>Document Everything:</strong> Explain your reasoning and interpret your results</li>
+<li><strong>Forgetting to Set Seeds:</strong> Always set random seeds for reproducible results</li>
+<li><strong>Total time to complete:</strong> ~3-4 hours for the 100% grade ⏱️</li>
+<li><strong>Good luck, and remember simulation will steer you right even when intuition will steer you wrong!</strong> 🎲</li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>💾 Important: Save Your Work Frequently!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Before you start coding:</strong> Make sure to commit your work often using the Source Control panel in Cursor (Ctrl+Shift+G or Cmd+Shift+G). This prevents the AI from overwriting your progress and ensures you don’t lose your work.</p>
+<p><strong>Commit after each major step:</strong></p>
+<ul>
+<li>After completing each simulation example</li>
+<li>After finishing each challenge question</li>
+<li>Before asking the AI for help with new code</li>
+</ul>
+<p><strong>How to commit:</strong></p>
+<ol type="1">
+<li>Open Source Control panel (Ctrl+Shift+G)</li>
+<li>Stage your changes (+ button)</li>
+<li>Write a descriptive commit message</li>
+<li>Click the checkmark to commit</li>
+</ol>
+<p><em>Remember: Frequent commits are your safety net!</em></p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-simulation-concepts" class="level2">
+<h2 class="anchored" data-anchor-id="sec-simulation-concepts">Essential Simulation Concepts 🎯</h2>
+<p>Before diving into the challenge, let’s review the key simulation concepts you’ll need. These examples will prepare you for the investment game analysis.</p>
+<section id="simple-simulation-coin-flip-game" class="level3">
+<h3 class="anchored" data-anchor-id="simple-simulation-coin-flip-game">1. Simple Simulation: Coin Flip Game</h3>
+<p>Let’s start with a basic coin flip simulation to understand the mechanics:</p>
+<section id="generative-model-for-the-simple-coin-flip-game" class="level4">
+<h4 class="anchored" data-anchor-id="generative-model-for-the-simple-coin-flip-game">Generative Model for the Simple Coin Flip Game</h4>
+<p>The simple coin flip game can be modeled as: - <strong>Coin Flip</strong>: <span class="math inline">\(X \sim \text{Bernoulli}(0.5)\)</span> (stochastic) - <strong>Winnings</strong>: <span class="math inline">\(W = 100\)</span> if <span class="math inline">\(X = 1\)</span> (heads), otherwise <span class="math inline">\(W = -100\)</span> (tails)</p>
+<p>This is an additive game where each flip results in a fixed gain or loss.</p>
+<p><strong>Key Difference from Investment Game:</strong> Unlike the investment game DAG (<strong>?@fig-investment-dag</strong>) which models wealth evolution over multiple time periods with multiplicative changes, this simple coin flip DAG represents a single-period game with additive winnings. The investment game shows how wealth compounds over time (<span class="math inline">\(W_t = 1.5 \times W_{t-1}\)</span> or <span class="math inline">\(W_t = 0.6 \times W_{t-1}\)</span>), while this simple game shows fixed winnings (<span class="math inline">\(W = +100\)</span> or <span class="math inline">\(W = -100\)</span>) based on a single coin flip outcome.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tidyverse' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggplot2' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tidyr' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'dplyr' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'forcats' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'lubridate' was built under R version 4.4.3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed for reproducibility</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of simulations</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create simulation data</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>sim_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">sim_num =</span> <span class="dv">1</span><span class="sc">:</span>n_sims,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">coin_flip =</span> <span class="fu">rbinom</span>(<span class="at">n =</span> n_sims, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.5</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">winnings =</span> <span class="fu">if_else</span>(coin_flip <span class="sc">==</span> <span class="dv">1</span>, <span class="dv">100</span>, <span class="sc">-</span><span class="dv">100</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Display results</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>sim_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 3
+   sim_num coin_flip winnings
+     &lt;int&gt;     &lt;int&gt;    &lt;dbl&gt;
+ 1       1         0     -100
+ 2       2         1      100
+ 3       3         0     -100
+ 4       4         1      100
+ 5       5         1      100
+ 6       6         0     -100
+ 7       7         1      100
+ 8       8         1      100
+ 9       9         1      100
+10      10         0     -100</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="time-series-simulation-account-balance-over-time" class="level3">
+<h3 class="anchored" data-anchor-id="time-series-simulation-account-balance-over-time">2. Time-Series Simulation: Account Balance Over Time</h3>
+<p>Now let’s simulate how an account balance changes over multiple periods:</p>
+<section id="generative-model-for-time-series-account-balance" class="level4">
+<h4 class="anchored" data-anchor-id="generative-model-for-time-series-account-balance">Generative Model for Time-Series Account Balance</h4>
+<p>The time-series simulation can be modeled as: - <strong>Initial Balance</strong>: <span class="math inline">\(B_0 = 1000\)</span> (deterministic) - <strong>Coin Flip</strong>: <span class="math inline">\(C_t \sim \text{Bernoulli}(0.5)\)</span> for each period <span class="math inline">\(t\)</span> - <strong>Balance Evolution</strong>: - If <span class="math inline">\(C_t = 1\)</span> (heads): <span class="math inline">\(B_t = B_{t-1} + 100\)</span> (add $100) - If <span class="math inline">\(C_t = 0\)</span> (tails): <span class="math inline">\(B_t = B_{t-1} - 100\)</span> (subtract $100)</p>
+<p>This is an additive process where each period’s balance depends on the previous balance plus a fixed amount.</p>
+<p><strong>Key Difference from Simple Coin Flip Game:</strong> Unlike the simple coin flip DAG (<strong>?@fig-simple-coin-dag</strong>) which represents a single-period game, this time-series DAG models sequential balance evolution over multiple periods. Each period’s balance depends on the previous period’s balance plus the current coin flip outcome. The simple game shows independent winnings per flip, while this model shows cumulative balance changes where <span class="math inline">\(B_t = B_{t-1} + \Delta_t\)</span> and <span class="math inline">\(\Delta_t = +100\)</span> or <span class="math inline">\(-100\)</span> based on the coin flip.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(ggplot2))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed for reproducibility</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">456</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>initial_balance <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>n_periods <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># Start with one simulation</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate one path</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>simulate_path <span class="ot">&lt;-</span> <span class="cf">function</span>(initial, periods) {</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  balance <span class="ot">&lt;-</span> initial</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  path <span class="ot">&lt;-</span> <span class="fu">numeric</span>(periods <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  path[<span class="dv">1</span>] <span class="ot">&lt;-</span> initial</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>periods) {</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    coin_flip <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (coin_flip <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>      balance <span class="ot">&lt;-</span> balance <span class="sc">+</span> <span class="dv">100</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>      balance <span class="ot">&lt;-</span> balance <span class="sc">-</span> <span class="dv">100</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    path[i <span class="sc">+</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> balance</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(path)</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Run simulation</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>time_series_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">period =</span> <span class="dv">0</span><span class="sc">:</span>n_periods,</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">balance =</span> <span class="fu">simulate_path</span>(initial_balance, n_periods)</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Create time series plot</span></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(time_series_data, <span class="fu">aes</span>(<span class="at">x =</span> period, <span class="at">y =</span> balance)) <span class="sc">+</span></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"cadetblue"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"darkblue"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Account Balance Over Time"</span>,</span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Single Simulation Path"</span>,</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Period"</span>,</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Account Balance ($)"</span>,</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Heads: +$100$, Tails: -$100$"</span></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">dollar_format</span>()) <span class="sc">+</span></span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>, <span class="at">color =</span> <span class="st">"gray50"</span>)</span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/timeseries-sim-r-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>R time-series simulation of account balance</figcaption>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the data</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>time_series_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11 × 2
+   period balance
+    &lt;int&gt;   &lt;dbl&gt;
+ 1      0    1000
+ 2      1     900
+ 3      2     800
+ 4      3     900
+ 5      4    1000
+ 6      5    1100
+ 7      6    1000
+ 8      7     900
+ 9      8     800
+10      9     700
+11     10     600</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="probability-distribution-final-balance-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="probability-distribution-final-balance-distribution">3. Probability Distribution: Final Balance Distribution</h3>
+<p>Let’s see what the distribution of final balances looks like across many simulations:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(ggplot2))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed for reproducibility</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">789</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>initial_balance <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>n_periods <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="dv">100</span>  <span class="co"># Multiple simulations</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate multiple paths</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>simulate_final_balance <span class="ot">&lt;-</span> <span class="cf">function</span>(initial, periods) {</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  balance <span class="ot">&lt;-</span> initial</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>periods) {</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    coin_flip <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (coin_flip <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>      balance <span class="ot">&lt;-</span> balance <span class="sc">+</span> <span class="dv">100</span>  <span class="co"># $100 gain</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>      balance <span class="ot">&lt;-</span> balance <span class="sc">-</span> <span class="dv">100</span>  <span class="co"># $100 loss</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(balance)</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Run multiple simulations</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>final_balances <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n_sims, <span class="fu">simulate_final_balance</span>(initial_balance, n_periods))</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data frame</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>distribution_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">sim_num =</span> <span class="dv">1</span><span class="sc">:</span>n_sims,</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">final_balance =</span> final_balances</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Create histogram</span></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(distribution_data, <span class="fu">aes</span>(<span class="at">x =</span> final_balance)) <span class="sc">+</span></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>, <span class="at">fill =</span> <span class="st">"plum"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> initial_balance, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Final Account Balances"</span>,</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">"100 Simulations,"</span>, n_periods, <span class="st">"Periods Each"</span>),</span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Final Balance ($)"</span>,</span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Frequency"</span>,</span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Red line shows initial balance ($1,000)"</span></span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">dollar_format</span>()) <span class="sc">+</span></span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>, <span class="at">color =</span> <span class="st">"gray50"</span>)</span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/distribution-sim-r-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>R probability distribution of final balances</figcaption>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary statistics</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>summary_stats <span class="ot">&lt;-</span> distribution_data <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_balance =</span> <span class="fu">mean</span>(final_balance),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_balance =</span> <span class="fu">median</span>(final_balance),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_above_initial =</span> <span class="fu">mean</span>(final_balance <span class="sc">&gt;</span> initial_balance)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Summary Statistics:"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Summary Statistics:"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>summary_stats</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  mean_balance median_balance prob_above_initial
+         &lt;dbl&gt;          &lt;dbl&gt;              &lt;dbl&gt;
+1         1002           1000               0.39</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="challenge-solutions" class="level2">
+<h2 class="anchored" data-anchor-id="challenge-solutions">Challenge Solutions 🎯</h2>
+<p>Now let’s work through each of the challenge questions systematically:</p>
+<section id="question-1-expected-value-analysis-75-grade" class="level3">
+<h3 class="anchored" data-anchor-id="question-1-expected-value-analysis-75-grade">Question 1: Expected Value Analysis (75% Grade)</h3>
+<p><strong>What is the “expected value” of your account balance after 1 coin flip for the original game?</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Expected value calculation for one coin flip</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>initial_wealth <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>prob_heads <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>prob_tails <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co"># If heads: wealth becomes 1.5 * initial_wealth</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>wealth_if_heads <span class="ot">&lt;-</span> <span class="fl">1.5</span> <span class="sc">*</span> initial_wealth</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co"># If tails: wealth becomes 0.6 * initial_wealth  </span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>wealth_if_tails <span class="ot">&lt;-</span> <span class="fl">0.6</span> <span class="sc">*</span> initial_wealth</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Expected value = probability * outcome for each scenario</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>expected_value <span class="ot">&lt;-</span> prob_heads <span class="sc">*</span> wealth_if_heads <span class="sc">+</span> prob_tails <span class="sc">*</span> wealth_if_tails</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Initial wealth: $"</span>, initial_wealth, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Initial wealth: $ 1000 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Wealth if heads (50% gain): $"</span>, wealth_if_heads, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Wealth if heads (50% gain): $ 1500 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Wealth if tails (40% loss): $"</span>, wealth_if_tails, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Wealth if tails (40% loss): $ 600 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Expected value after 1 flip: $"</span>, expected_value, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Expected value after 1 flip: $ 1050 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Expected gain/loss: $"</span>, expected_value <span class="sc">-</span> initial_wealth, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Expected gain/loss: $ 50 </code></pre>
+</div>
+</div>
+<p><strong>Answer:</strong> The expected value after 1 coin flip is <strong>$1,050</strong>. This is calculated as: - 50% chance of $1,500 (heads: 50% gain) - 50% chance of $600 (tails: 40% loss) - Expected value = 0.5 × $1,500 + 0.5 × $600 = $1,050</p>
+</section>
+<section id="question-2-expectation-vs.-reality-75-grade" class="level3">
+<h3 class="anchored" data-anchor-id="question-2-expectation-vs.-reality-75-grade">Question 2: Expectation vs.&nbsp;Reality (75% Grade)</h3>
+<p><strong>Is the expected value positive or negative? Do you expect your account to be worth more or less than $1,000 based on this result?</strong> ##The expected value is positive ($1,050 &gt; $1,000).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The expected value is positive ($1,050 &gt; $1,000)</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># But let's think about this more carefully...</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Expected return per flip</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>expected_return <span class="ot">&lt;-</span> (<span class="fl">1.5</span> <span class="sc">*</span> <span class="fl">0.5</span>) <span class="sc">+</span> (<span class="fl">0.6</span> <span class="sc">*</span> <span class="fl">0.5</span>)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Expected return per flip: "</span>, expected_return, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Expected return per flip:  1.05 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"This means we expect a "</span>, (expected_return <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="st">"% gain per flip</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This means we expect a  5 % gain per flip</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># But what about the geometric mean?</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co"># For multiplicative processes, we should consider the geometric mean</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>geometric_mean <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fl">1.5</span> <span class="sc">*</span> <span class="fl">0.6</span>)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Geometric mean return: "</span>, geometric_mean, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Geometric mean return:  0.9486833 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"This suggests a "</span>, (geometric_mean <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="st">"% loss per flip on average</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This suggests a  -5.13167 % loss per flip on average</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Key insight: The arithmetic mean suggests profit, but the geometric mean suggests loss!</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Key insight: The arithmetic mean suggests profit, but the geometric mean suggests loss!</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"This is the difference between expected value and expected growth rate.</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This is the difference between expected value and expected growth rate.</code></pre>
+</div>
+</div>
+<p><strong>Answer:</strong> - <strong>Expected value is positive</strong> ($1,050 &gt; $1,000) - <strong>However, this is misleading!</strong> The arithmetic mean suggests a 5% gain per flip - <strong>But the geometric mean</strong> (√(1.5 × 0.6) = √0.9 ≈ 0.949) suggests a <strong>5.1% loss per flip</strong> - <strong>Key insight:</strong> For multiplicative processes like wealth accumulation, the geometric mean is more relevant than the arithmetic mean</p>
+</section>
+<section id="question-3-single-simulation-75-grade" class="level3">
+<h3 class="anchored" data-anchor-id="question-3-single-simulation-75-grade">Question 3: Single Simulation (75% Grade)</h3>
+<p><strong>Run one simulation showing the dynamics of your account balance over time. Make a plot showing your simulated account balance over time. Comment on the results.</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(ggplot2))</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed for reproducibility</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>initial_wealth <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>age_start <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>age_end <span class="ot">&lt;-</span> <span class="dv">55</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>years <span class="ot">&lt;-</span> age_end <span class="sc">-</span> age_start</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate one path of the investment game</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>simulate_investment_path <span class="ot">&lt;-</span> <span class="cf">function</span>(initial, years) {</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>  wealth <span class="ot">&lt;-</span> initial</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>  path <span class="ot">&lt;-</span> <span class="fu">numeric</span>(years <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>  path[<span class="dv">1</span>] <span class="ot">&lt;-</span> initial</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>years) {</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>    coin_flip <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (coin_flip <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>      wealth <span class="ot">&lt;-</span> wealth <span class="sc">*</span> <span class="fl">1.5</span>  <span class="co"># 50% gain</span></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>      wealth <span class="ot">&lt;-</span> wealth <span class="sc">*</span> <span class="fl">0.6</span>   <span class="co"># 40% loss</span></span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>    path[i <span class="sc">+</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> wealth</span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(path)</span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Run single simulation</span></span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a>wealth_path <span class="ot">&lt;-</span> <span class="fu">simulate_investment_path</span>(initial_wealth, years)</span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data frame</span></span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a>simulation_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">age =</span> age_start<span class="sc">:</span>age_end,</span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">wealth =</span> wealth_path</span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Create time series plot</span></span>
+<span id="cb40-42"><a href="#cb40-42" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(simulation_data, <span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> wealth)) <span class="sc">+</span></span>
+<span id="cb40-43"><a href="#cb40-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"darkblue"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb40-44"><a href="#cb40-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"darkblue"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb40-45"><a href="#cb40-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> initial_wealth, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb40-46"><a href="#cb40-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb40-47"><a href="#cb40-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Investment Game: Single Simulation Path"</span>,</span>
+<span id="cb40-48"><a href="#cb40-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Wealth Evolution from Age 20 to 55"</span>,</span>
+<span id="cb40-49"><a href="#cb40-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Age"</span>,</span>
+<span id="cb40-50"><a href="#cb40-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Account Balance ($)"</span>,</span>
+<span id="cb40-51"><a href="#cb40-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Red line shows initial investment ($1,000)"</span></span>
+<span id="cb40-52"><a href="#cb40-52" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb40-53"><a href="#cb40-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">dollar_format</span>()) <span class="sc">+</span></span>
+<span id="cb40-54"><a href="#cb40-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb40-55"><a href="#cb40-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb40-56"><a href="#cb40-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb40-57"><a href="#cb40-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>, <span class="at">color =</span> <span class="st">"gray50"</span>)</span>
+<span id="cb40-58"><a href="#cb40-58" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/single-simulation-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Single simulation of investment game over 35 years (age 20 to 55)</figcaption>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show final results</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>final_wealth <span class="ot">&lt;-</span> <span class="fu">tail</span>(wealth_path, <span class="dv">1</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Initial wealth: $"</span>, initial_wealth, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Initial wealth: $ 1000 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Final wealth at age 55: $"</span>, <span class="fu">round</span>(final_wealth, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Final wealth at age 55: $ 24429.47 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total return: "</span>, <span class="fu">round</span>((final_wealth<span class="sc">/</span>initial_wealth <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total return:  2342.9 %</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Am I happy? "</span>, <span class="fu">ifelse</span>(final_wealth <span class="sc">&gt;</span> initial_wealth, <span class="st">"Yes!"</span>, <span class="st">"No..."</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Am I happy?  Yes! </code></pre>
+</div>
+</div>
+<p><strong>Answer:</strong> In this single simulation, the final wealth at age 55 was <strong>$[result will vary]</strong>. The path shows the volatile nature of multiplicative growth - some years see large gains (50%), others see significant losses (40%). Whether I’m “happy” depends on the outcome, but this single path doesn’t tell us much about the overall probability of success.</p>
+</section>
+<section id="question-4-multiple-simulations-85-grade" class="level3">
+<h3 class="anchored" data-anchor-id="question-4-multiple-simulations-85-grade">Question 4: Multiple Simulations (85% Grade)</h3>
+<p><strong>Run 100 simulations modelling the dynamics of your account balance over time. Make a plot showing a probability distribution of the 100 simulated account balances at age 55.</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed for reproducibility</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">456</span>)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>initial_wealth <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>years <span class="ot">&lt;-</span> <span class="dv">35</span>  <span class="co"># Age 20 to 55</span></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate multiple paths</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>simulate_final_wealth <span class="ot">&lt;-</span> <span class="cf">function</span>(initial, years) {</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>  wealth <span class="ot">&lt;-</span> initial</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>years) {</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>    coin_flip <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (coin_flip <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>      wealth <span class="ot">&lt;-</span> wealth <span class="sc">*</span> <span class="fl">1.5</span>  <span class="co"># 50% gain</span></span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>      wealth <span class="ot">&lt;-</span> wealth <span class="sc">*</span> <span class="fl">0.6</span>   <span class="co"># 40% loss</span></span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(wealth)</span>
+<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb49-22"><a href="#cb49-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-23"><a href="#cb49-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Run 100 simulations</span></span>
+<span id="cb49-24"><a href="#cb49-24" aria-hidden="true" tabindex="-1"></a>final_wealths <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n_sims, <span class="fu">simulate_final_wealth</span>(initial_wealth, years))</span>
+<span id="cb49-25"><a href="#cb49-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-26"><a href="#cb49-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data frame</span></span>
+<span id="cb49-27"><a href="#cb49-27" aria-hidden="true" tabindex="-1"></a>simulation_results <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb49-28"><a href="#cb49-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">sim_num =</span> <span class="dv">1</span><span class="sc">:</span>n_sims,</span>
+<span id="cb49-29"><a href="#cb49-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">final_wealth =</span> final_wealths</span>
+<span id="cb49-30"><a href="#cb49-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb49-31"><a href="#cb49-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-32"><a href="#cb49-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Create histogram</span></span>
+<span id="cb49-33"><a href="#cb49-33" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(simulation_results, <span class="fu">aes</span>(<span class="at">x =</span> final_wealth)) <span class="sc">+</span></span>
+<span id="cb49-34"><a href="#cb49-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>, <span class="at">fill =</span> <span class="st">"lightcoral"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb49-35"><a href="#cb49-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> initial_wealth, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb49-36"><a href="#cb49-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">mean</span>(final_wealths), <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">linewidth =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb49-37"><a href="#cb49-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb49-38"><a href="#cb49-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Final Wealth: 100 Simulations"</span>,</span>
+<span id="cb49-39"><a href="#cb49-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Investment Game from Age 20 to 55"</span>,</span>
+<span id="cb49-40"><a href="#cb49-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Final Wealth at Age 55 ($)"</span>,</span>
+<span id="cb49-41"><a href="#cb49-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Frequency"</span>,</span>
+<span id="cb49-42"><a href="#cb49-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Red line: Initial investment ($1,000), Blue line: Mean final wealth"</span></span>
+<span id="cb49-43"><a href="#cb49-43" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb49-44"><a href="#cb49-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">dollar_format</span>(), <span class="at">trans =</span> <span class="st">"log10"</span>) <span class="sc">+</span></span>
+<span id="cb49-45"><a href="#cb49-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb49-46"><a href="#cb49-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb49-47"><a href="#cb49-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb49-48"><a href="#cb49-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>, <span class="at">color =</span> <span class="st">"gray50"</span>)</span>
+<span id="cb49-49"><a href="#cb49-49" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/multiple-simulations-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Distribution of final wealth from 100 simulations of the investment game</figcaption>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary statistics</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>summary_stats <span class="ot">&lt;-</span> simulation_results <span class="sc">%&gt;%</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_wealth =</span> <span class="fu">mean</span>(final_wealth),</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_wealth =</span> <span class="fu">median</span>(final_wealth),</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_wealth =</span> <span class="fu">min</span>(final_wealth),</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_wealth =</span> <span class="fu">max</span>(final_wealth),</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_above_initial =</span> <span class="fu">mean</span>(final_wealth <span class="sc">&gt;</span> initial_wealth),</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_above_10000 =</span> <span class="fu">mean</span>(final_wealth <span class="sc">&gt;</span> <span class="dv">10000</span>)</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Summary Statistics:"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Summary Statistics:"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary_stats)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 6
+  mean_wealth median_wealth min_wealth max_wealth prob_above_initial
+        &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;              &lt;dbl&gt;
+1       3282.          250.     0.0656     61074.               0.24
+# ℹ 1 more variable: prob_above_10000 &lt;dbl&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Key Insights:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Key Insights:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- Mean final wealth: $"</span>, <span class="fu">round</span>(summary_stats<span class="sc">$</span>mean_wealth, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>- Mean final wealth: $ 3282.43 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- Median final wealth: $"</span>, <span class="fu">round</span>(summary_stats<span class="sc">$</span>median_wealth, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>- Median final wealth: $ 250.16 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- Probability of ending above $1,000: "</span>, <span class="fu">round</span>(summary_stats<span class="sc">$</span>prob_above_initial, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>- Probability of ending above $1,000:  0.24 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- Probability of ending above $10,000: "</span>, <span class="fu">round</span>(summary_stats<span class="sc">$</span>prob_above_10000, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>- Probability of ending above $10,000:  0.06 </code></pre>
+</div>
+</div>
+<p><strong>Answer:</strong> The distribution shows a <strong>highly skewed</strong> pattern with most outcomes being very low (near zero) but a few extremely high outcomes. The mean is much higher than the median, indicating the distribution is heavily right-skewed. Most simulations result in significant losses, but a few “lucky” paths result in enormous gains.</p>
+</section>
+<section id="question-5-probability-analysis-95-grade" class="level3">
+<h3 class="anchored" data-anchor-id="question-5-probability-analysis-95-grade">Question 5: Probability Analysis (95% Grade)</h3>
+<p><strong>Based on the 100 simulations above, what is the probability that your account balance will be greater than $1,000 at age 55?</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate probability from our simulation results</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>prob_above_1000 <span class="ot">&lt;-</span> <span class="fu">mean</span>(final_wealths <span class="sc">&gt;</span> initial_wealth)</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Probability of ending above $1,000: "</span>, <span class="fu">round</span>(prob_above_1000, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Probability of ending above $1,000:  0.24 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"This means "</span>, <span class="fu">round</span>(prob_above_1000 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"% of simulations ended above the initial investment</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This means  24 % of simulations ended above the initial investment</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"And "</span>, <span class="fu">round</span>((<span class="dv">1</span> <span class="sc">-</span> prob_above_1000) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"% ended below the initial investment</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>And  76 % ended below the initial investment</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's also look at some other thresholds</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Other probability thresholds:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Other probability thresholds:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Probability above $500: "</span>, <span class="fu">round</span>(<span class="fu">mean</span>(final_wealths <span class="sc">&gt;</span> <span class="dv">500</span>), <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Probability above $500:  0.4 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Probability above $5,000: "</span>, <span class="fu">round</span>(<span class="fu">mean</span>(final_wealths <span class="sc">&gt;</span> <span class="dv">5000</span>), <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Probability above $5,000:  0.13 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Probability above $10,000: "</span>, <span class="fu">round</span>(<span class="fu">mean</span>(final_wealths <span class="sc">&gt;</span> <span class="dv">10000</span>), <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Probability above $10,000:  0.06 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Probability above $100,000: "</span>, <span class="fu">round</span>(<span class="fu">mean</span>(final_wealths <span class="sc">&gt;</span> <span class="dv">100000</span>), <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Probability above $100,000:  0 </code></pre>
+</div>
+</div>
+<p><strong>Answer:</strong> Based on the 100 simulations, the probability that your account balance will be greater than $1,000 at age 55 is approximately <strong>[result will vary, typically around 0.3-0.4]</strong>. This means that despite the positive expected value, you’re more likely to lose money than gain money in this investment game!</p>
+</section>
+<section id="question-6-strategy-comparison-100-grade" class="level3">
+<h3 class="anchored" data-anchor-id="question-6-strategy-comparison-100-grade">Question 6: Strategy Comparison (100% Grade)</h3>
+<p><strong>Run 100 simulations for the modified game strategy. What is the probability that your account balance will be greater than $10,000 at age 55? Is this probability higher or lower than the probability in the original game?</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed for reproducibility</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">789</span>)</span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Modified strategy: Bet exactly 50% of current balance each round</span></span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>simulate_modified_strategy <span class="ot">&lt;-</span> <span class="cf">function</span>(initial, years) {</span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>  wealth <span class="ot">&lt;-</span> initial</span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>years) {</span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>    coin_flip <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>    bet_amount <span class="ot">&lt;-</span> wealth <span class="sc">*</span> <span class="fl">0.5</span>  <span class="co"># Bet 50% of current wealth</span></span>
+<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb80-11"><a href="#cb80-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (coin_flip <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb80-12"><a href="#cb80-12" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Heads: 50% gain on the bet</span></span>
+<span id="cb80-13"><a href="#cb80-13" aria-hidden="true" tabindex="-1"></a>      wealth <span class="ot">&lt;-</span> wealth <span class="sc">-</span> bet_amount <span class="sc">+</span> bet_amount <span class="sc">*</span> <span class="fl">1.5</span></span>
+<span id="cb80-14"><a href="#cb80-14" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb80-15"><a href="#cb80-15" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Tails: 40% loss on the bet</span></span>
+<span id="cb80-16"><a href="#cb80-16" aria-hidden="true" tabindex="-1"></a>      wealth <span class="ot">&lt;-</span> wealth <span class="sc">-</span> bet_amount <span class="sc">+</span> bet_amount <span class="sc">*</span> <span class="fl">0.6</span></span>
+<span id="cb80-17"><a href="#cb80-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb80-18"><a href="#cb80-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb80-19"><a href="#cb80-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(wealth)</span>
+<span id="cb80-20"><a href="#cb80-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb80-21"><a href="#cb80-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-22"><a href="#cb80-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Run 100 simulations of modified strategy</span></span>
+<span id="cb80-23"><a href="#cb80-23" aria-hidden="true" tabindex="-1"></a>modified_wealths <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n_sims, <span class="fu">simulate_modified_strategy</span>(initial_wealth, years))</span>
+<span id="cb80-24"><a href="#cb80-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-25"><a href="#cb80-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Create comparison data</span></span>
+<span id="cb80-26"><a href="#cb80-26" aria-hidden="true" tabindex="-1"></a>comparison_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb80-27"><a href="#cb80-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Original"</span>, <span class="st">"Modified"</span>), <span class="at">each =</span> n_sims),</span>
+<span id="cb80-28"><a href="#cb80-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">final_wealth =</span> <span class="fu">c</span>(final_wealths, modified_wealths)</span>
+<span id="cb80-29"><a href="#cb80-29" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb80-30"><a href="#cb80-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-31"><a href="#cb80-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Create comparison plot</span></span>
+<span id="cb80-32"><a href="#cb80-32" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(comparison_data, <span class="fu">aes</span>(<span class="at">x =</span> final_wealth, <span class="at">fill =</span> strategy)) <span class="sc">+</span></span>
+<span id="cb80-33"><a href="#cb80-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">bins =</span> <span class="dv">20</span>, <span class="at">position =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb80-34"><a href="#cb80-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1000</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb80-35"><a href="#cb80-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">10000</span>, <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb80-36"><a href="#cb80-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb80-37"><a href="#cb80-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Strategy Comparison: Original vs Modified Investment Game"</span>,</span>
+<span id="cb80-38"><a href="#cb80-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Distribution of Final Wealth from 100 Simulations Each"</span>,</span>
+<span id="cb80-39"><a href="#cb80-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Final Wealth at Age 55 ($)"</span>,</span>
+<span id="cb80-40"><a href="#cb80-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Frequency"</span>,</span>
+<span id="cb80-41"><a href="#cb80-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Red line: $1,000 threshold, Blue line: $10,000 threshold"</span></span>
+<span id="cb80-42"><a href="#cb80-42" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb80-43"><a href="#cb80-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">dollar_format</span>(), <span class="at">trans =</span> <span class="st">"log10"</span>) <span class="sc">+</span></span>
+<span id="cb80-44"><a href="#cb80-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb80-45"><a href="#cb80-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb80-46"><a href="#cb80-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb80-47"><a href="#cb80-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>, <span class="at">color =</span> <span class="st">"gray50"</span>),</span>
+<span id="cb80-48"><a href="#cb80-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span></span>
+<span id="cb80-49"><a href="#cb80-49" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/modified-strategy-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Comparison of original vs modified investment strategies</figcaption>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate probabilities for both strategies</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>prob_original_above_10000 <span class="ot">&lt;-</span> <span class="fu">mean</span>(final_wealths <span class="sc">&gt;</span> <span class="dv">10000</span>)</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>prob_modified_above_10000 <span class="ot">&lt;-</span> <span class="fu">mean</span>(modified_wealths <span class="sc">&gt;</span> <span class="dv">10000</span>)</span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Strategy Comparison Results:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Strategy Comparison Results:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Original Strategy:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Original Strategy:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Probability above $1,000: "</span>, <span class="fu">round</span>(<span class="fu">mean</span>(final_wealths <span class="sc">&gt;</span> <span class="dv">1000</span>), <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Probability above $1,000:  0.24 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Probability above $10,000: "</span>, <span class="fu">round</span>(prob_original_above_10000, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Probability above $10,000:  0.06 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Mean final wealth: $"</span>, <span class="fu">round</span>(<span class="fu">mean</span>(final_wealths), <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Mean final wealth: $ 3282.43 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Modified Strategy:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Modified Strategy:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Probability above $1,000: "</span>, <span class="fu">round</span>(<span class="fu">mean</span>(modified_wealths <span class="sc">&gt;</span> <span class="dv">1000</span>), <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Probability above $1,000:  0.51 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Probability above $10,000: "</span>, <span class="fu">round</span>(prob_modified_above_10000, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Probability above $10,000:  0.04 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Mean final wealth: $"</span>, <span class="fu">round</span>(<span class="fu">mean</span>(modified_wealths), <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Mean final wealth: $ 2509.11 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Comparison:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Comparison:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Modified strategy probability above $10,000 is "</span>, </span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ifelse</span>(prob_modified_above_10000 <span class="sc">&gt;</span> prob_original_above_10000, <span class="st">"HIGHER"</span>, <span class="st">"LOWER"</span>), </span>
+<span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">" than original strategy</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Modified strategy probability above $10,000 is  LOWER  than original strategy</code></pre>
+</div>
+</div>
+<p><strong>Answer:</strong> The modified strategy (betting exactly 50% of current balance each round) shows <strong>[results will vary]</strong>. The probability of ending above $10,000 with the modified strategy is <strong>[higher/lower]</strong> than the original strategy. This demonstrates how different betting strategies can significantly affect outcomes in multiplicative growth processes.</p>
+</section>
+</section>
+<section id="key-insights-and-counter-intuitive-findings" class="level2">
+<h2 class="anchored" data-anchor-id="key-insights-and-counter-intuitive-findings">Key Insights and Counter-Intuitive Findings 🧠</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"KEY INSIGHTS FROM THIS SIMULATION:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>KEY INSIGHTS FROM THIS SIMULATION:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=====================================</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=====================================</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"1. EXPECTED VALUE vs REALITY:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>1. EXPECTED VALUE vs REALITY:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"   - Arithmetic mean suggests profit (5% gain per flip)</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   - Arithmetic mean suggests profit (5% gain per flip)</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"   - Geometric mean suggests loss (5.1% loss per flip)</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   - Geometric mean suggests loss (5.1% loss per flip)</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"   - For multiplicative processes, geometric mean is more relevant</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   - For multiplicative processes, geometric mean is more relevant</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"2. THE PARADOX OF MULTIPLICATIVE GROWTH:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2. THE PARADOX OF MULTIPLICATIVE GROWTH:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"   - Positive expected value doesn't guarantee positive outcomes</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   - Positive expected value doesn't guarantee positive outcomes</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"   - Most paths lead to losses, but a few lead to enormous gains</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   - Most paths lead to losses, but a few lead to enormous gains</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb121"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"   - This creates a highly skewed distribution</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   - This creates a highly skewed distribution</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"3. STRATEGY MATTERS:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>3. STRATEGY MATTERS:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"   - Different betting strategies produce different outcomes</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   - Different betting strategies produce different outcomes</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb127"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"   - Fixed percentage betting vs fixed amount betting</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   - Fixed percentage betting vs fixed amount betting</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb129"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"   - Risk management is crucial in multiplicative processes</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   - Risk management is crucial in multiplicative processes</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb131"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"4. SIMULATION REVEALS TRUTH:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>4. SIMULATION REVEALS TRUTH:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"   - Intuition fails with multiplicative growth</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   - Intuition fails with multiplicative growth</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb135"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"   - Monte Carlo simulation reveals the true distribution</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   - Monte Carlo simulation reveals the true distribution</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"   - Always simulate before making investment decisions!</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   - Always simulate before making investment decisions!</code></pre>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
     }
-  }
-  return(wealth)
-}
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
 
-# Compare both strategies
-modified_wealths <- replicate(100, simulate_modified_strategy(1000, 35))
-prob_modified_above_10000 <- mean(modified_wealths > 10000)
-prob_original_above_10000 <- mean(final_wealths > 10000)
-        </div>
 
-        <div style="text-align: center; margin: 20px 0;">
-            <img src="strategy_comparison.png" alt="Strategy Comparison Plot" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px;">
-            <p style="font-style: italic; color: #666; margin-top: 10px;">Figure 3: Comparison of original vs modified investment strategies</p>
-        </div>
 
-        <p><strong>Answer:</strong> The modified strategy (betting exactly 50% of current balance each round) shows different results than the original strategy:</p>
-        <ul>
-            <li><strong>Original Strategy:</strong> 24% above $1,000, 6% above $10,000</li>
-            <li><strong>Modified Strategy:</strong> 51% above $1,000, 4% above $10,000</li>
-        </ul>
-        <p>The probability of ending above $10,000 with the modified strategy is <strong>LOWER</strong> than the original strategy. This demonstrates how different betting strategies can significantly affect outcomes in multiplicative growth processes.</p>
 
-        <h2>Key Insights and Counter-Intuitive Findings 🧠</h2>
-        
-        <div class="callout">
-            <h3>Critical Insights from This Simulation:</h3>
-            <ol>
-                <li><strong>Expected Value vs Reality:</strong>
-                    <ul>
-                        <li>Arithmetic mean suggests profit (5% gain per flip)</li>
-                        <li>Geometric mean suggests loss (5.1% loss per flip)</li>
-                        <li>For multiplicative processes, geometric mean is more relevant</li>
-                    </ul>
-                </li>
-                <li><strong>The Paradox of Multiplicative Growth:</strong>
-                    <ul>
-                        <li>Positive expected value doesn't guarantee positive outcomes</li>
-                        <li>Most paths lead to losses, but a few lead to enormous gains</li>
-                        <li>This creates a highly skewed distribution</li>
-                    </ul>
-                </li>
-                <li><strong>Strategy Matters:</strong>
-                    <ul>
-                        <li>Different betting strategies produce different outcomes</li>
-                        <li>Fixed percentage betting vs fixed amount betting</li>
-                        <li>Risk management is crucial in multiplicative processes</li>
-                    </ul>
-                </li>
-                <li><strong>Simulation Reveals Truth:</strong>
-                    <ul>
-                        <li>Intuition fails with multiplicative growth</li>
-                        <li>Monte Carlo simulation reveals the true distribution</li>
-                        <li>Always simulate before making investment decisions!</li>
-                    </ul>
-                </li>
-            </ol>
-        </div>
-
-        <h2>Resources</h2>
-        <ul>
-            <li><strong>Quarto Markdown:</strong> <a href="https://quarto.org/docs/authoring/markdown-basics.html">quarto.org/docs/authoring/markdown-basics.html</a></li>
-            <li><strong>Quarto Documentation:</strong> <a href="https://quarto.org/docs">quarto.org/docs</a></li>
-            <li><strong>R for Data Science:</strong> <a href="https://r4ds.had.co.nz">r4ds.had.co.nz</a></li>
-            <li><strong>Python Data Science Handbook:</strong> <a href="https://jakevdp.github.io/PythonDataScienceHandbook">jakevdp.github.io/PythonDataScienceHandbook</a></li>
-        </ul>
-    </div>
-</body>
-</html>
+</body></html>

@@ -5,7 +5,7 @@ format:
   html: default
   pdf: default
 execute:
-  echo: true
+  echo: false
   eval: true
 ---
 
@@ -70,7 +70,7 @@ This multiplicative process means wealth compounds over time, making each coin f
    - Under "Source", select "Deploy from a branch"
    - Choose "main" branch and "/ (root)" folder
    - Click "Save"
-   - Your site will be available at: `https://[your-username].github.io/simulationChallenge/`
+   - Your site will be available at: `https://jisaiahw.github.io/simulationchallenge/`
    - **Note:** It may take a few minutes for the site to become available after enabling Pages
 
 ## Grading Rubric 🎓
@@ -448,7 +448,7 @@ cat("Expected gain/loss: $", expected_value - initial_wealth, "\n")
 ### Question 2: Expectation vs. Reality (75% Grade)
 
 **Is the expected value positive or negative? Do you expect your account to be worth more or less than $1,000 based on this result?**
-
+##The expected value is positive ($1,050 > $1,000).
 ```{r}
 #| label: expectation-analysis
 #| echo: true
