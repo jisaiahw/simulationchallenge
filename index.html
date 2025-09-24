@@ -74,7 +74,6 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="challenge-solutions" class="level2">
 <h2 class="anchored" data-anchor-id="challenge-solutions">Challenge Solutions 🎯</h2>
-<p>Now let’s work through each of the challenge questions systematically:</p>
 <section id="question-1-expected-value-analysis-75-grade" class="level3">
 <h3 class="anchored" data-anchor-id="question-1-expected-value-analysis-75-grade">Question 1: Expected Value Analysis (75% Grade)</h3>
 <p><strong>What is the “expected value” of your account balance after 1 coin flip for the original game?</strong></p>
@@ -107,25 +106,12 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell-output cell-output-stdout">
 <pre><code>This means we expect a  5 % gain per flip</code></pre>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Geometric mean return:  0.9486833 </code></pre>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>This suggests a  -5.13167 % loss per flip on average</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Key insight: The arithmetic mean suggests profit, but the geometric mean suggests loss!</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>This is the difference between expected value and expected growth rate.</code></pre>
-</div>
-</div>
-<p><strong>Answer:</strong> - <strong>Expected value is positive</strong> ($1,050 &gt; $1,000) - This indicates that on average, you will make a profit of $50 per flip.</p>
+<p><strong>Answer:</strong> - <strong>Expected value is positive</strong> ($1,050 &gt; $1,000) - This indicates that on average, you gain money (making it more than $1,000) from the investment.</p>
 </section>
 <section id="question-3-single-simulation-75-grade" class="level3">
 <h3 class="anchored" data-anchor-id="question-3-single-simulation-75-grade">Question 3: Single Simulation (75% Grade)</h3>
-<p><strong>Run one simulation showing the dynamics of your account balance over time. Make a plot showing your simulated account balance over time. Comment on the results.</strong></p>
+<p><strong>Run one simulation showing the dynamics of your account balance over time. Make a plot showing your simulated account balance over time. Comment on the results. Are you happy?</strong></p>
 <div class="cell">
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: package 'tidyverse' was built under R version 4.4.3</code></pre>
@@ -207,7 +193,7 @@ Key Insights:</code></pre>
 <pre><code>- Probability of ending above $10,000:  0.06 </code></pre>
 </div>
 </div>
-<p><strong>Answer:</strong> The distribution shows most outcomes being very low (near zero) but with a few extremely high outcomes. The mean is much higher than the median, indicating the distribution is heavily right-skewed. Most simulations result in significant losses, but a few “lucky” paths result in enormous gains.</p>
+<p><strong>Answer:</strong> The distribution shows most outcomes being very low (near zero) but with a few extremely high outcomes. The mean is much higher than the median, indicating the distribution is heavily right-skewed. Most simulations result in significant losses, but a few “lucky” paths result in enormous gains. This would not make an investor happy.</p>
 </section>
 <section id="question-5-probability-analysis-95-grade" class="level3">
 <h3 class="anchored" data-anchor-id="question-5-probability-analysis-95-grade">Question 5: Probability Analysis (95% Grade)</h3>
@@ -239,7 +225,7 @@ Other probability thresholds:</code></pre>
 <pre><code>Probability above $100,000:  0 </code></pre>
 </div>
 </div>
-<p><strong>Answer:</strong> Based on the 100 simulations, the probability that your account balance will be greater than $1,000 at age 55 is approximately <strong>[result will vary, typically around 0.3-0.4]</strong>. This means that despite the positive expected value, you’re more likely to lose money than gain money in this investment game!</p>
+<p><strong>Answer:</strong> Based on the 100 simulations, the probability that your account balance will be greater than $1,000 at age 55 is approximately <strong>0.24</strong>. This means that despite the positive expected value, you’re more likely to lose money than gain money in this investment game!</p>
 </section>
 <section id="question-6-strategy-comparison-100-grade" class="level3">
 <h3 class="anchored" data-anchor-id="question-6-strategy-comparison-100-grade">Question 6: Strategy Comparison (100% Grade)</h3>
@@ -289,67 +275,8 @@ Comparison:</code></pre>
 <pre><code>Modified strategy probability above $10,000 is  LOWER  than original strategy</code></pre>
 </div>
 </div>
-<p><strong>Answer:</strong> The modified strategy (betting exactly 50% of current balance each round) shows <strong>[results will vary]</strong>. The probability of ending above $10,000 with the modified strategy is <strong>[higher/lower]</strong> than the original strategy. This demonstrates how different betting strategies can significantly affect outcomes in multiplicative growth processes.</p>
+<p><strong>Answer:</strong> The modified strategy (betting exactly 50% of current balance each round) shows a <strong>51%</strong> chance of ending above $1,000, and a <strong>4%</strong> chance of ending above $10,000. The probability of ending above $10,000 with the modified strategy is <strong>lower</strong> than the original strategy. This demonstrates how different betting strategies can significantly affect the outcomes of the game.</p>
 </section>
-</section>
-<section id="key-insights-and-counter-intuitive-findings" class="level2">
-<h2 class="anchored" data-anchor-id="key-insights-and-counter-intuitive-findings">Key Insights and Counter-Intuitive Findings 🧠</h2>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>KEY INSIGHTS FROM THIS SIMULATION:</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>=====================================</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>1. EXPECTED VALUE vs REALITY:</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   - Arithmetic mean suggests profit (5% gain per flip)</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   - Geometric mean suggests loss (5.1% loss per flip)</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   - For multiplicative processes, geometric mean is more relevant</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>2. THE PARADOX OF MULTIPLICATIVE GROWTH:</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   - Positive expected value doesn't guarantee positive outcomes</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   - Most paths lead to losses, but a few lead to enormous gains</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   - This creates a highly skewed distribution</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>3. STRATEGY MATTERS:</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   - Different betting strategies produce different outcomes</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   - Fixed percentage betting vs fixed amount betting</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   - Risk management is crucial in multiplicative processes</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>4. SIMULATION REVEALS TRUTH:</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   - Intuition fails with multiplicative growth</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   - Monte Carlo simulation reveals the true distribution</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   - Always simulate before making investment decisions!</code></pre>
-</div>
-</div>
 </section>
 </section>
 
